@@ -1,2 +1,4 @@
 /** @ignore @module */
-export * from './contract';
+export { Contract } from './contract';
+export { ABI } from './abi';
+export { Account, FunctionCallOptions } from './account';

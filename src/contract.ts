@@ -1,6 +1,7 @@
 // import BN from 'bn.js';
-import { Account, Contract as InternalContract } from 'near-api-js';
-import { ContractMethods } from 'near-api-js/lib/contract';
+// import { Account, Contract as InternalContract } from 'near-api-js';
+// import { ContractMethods } from 'near-api-js/lib/contract';
+import { ABI } from './abi';
 
 // // Makes `function.name` return given name
 // function nameFunction(name: string, body: (args?: any[]) => {}) {
@@ -26,38 +27,18 @@ import { ContractMethods } from 'near-api-js/lib/contract';
 //     callbackUrl?: string;
 // }
 
-export interface ABI {
-    /**
-     * Methods that change state. These methods cost gas and require a signed transaction.
-     * 
-     * @see {@link Account.functionCall}
-     */
-    changeMethods: string[];
-
-    /**
-     * View methods do not require a signed transaction.
-     * 
-     * @@see {@link Account.viewFunction}
-     */
-    viewMethods: string[];
-}
-
-
 export class Contract {
-    readonly internalContract: InternalContract;
+    readonly contractId: string;
+    readonly abi?: ABI;
 
     /**
      * @param account NEAR account to sign change method transactions
      * @param contractId NEAR account id where the contract is deployed
      * @param options NEAR smart contract methods that your application will use. These will be available as `contract.methodName`
      */
-    constructor(account: Account, contractId: string, abi: ABI) {
-        const methods: ContractMethods = { changeMethods: [], viewMethods: [] };
-        // TODO remove
-        console.log(methods);
-        // TODO build contract methods
-
-        // TODO Parse ABI
+    constructor(contractId: string, abi?: ABI) {
+        this.contractId = contractId;
+        this.abi = abi;
 
         // this.account = account;
         // this.contractId = contractId;
