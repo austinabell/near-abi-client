@@ -1,38 +1,40 @@
 // TODO these types are probably all wrong, just basing off existing schema
 
 export interface ABI {
-  schema_version: string
-  methods: Method[]
-  types: Type[]
+  schema_version: string;
+  methods: Function[];
+  types: Type[];
 }
 
-export interface Method {
-  name: string
-  is_view?: boolean
-  is_init?: boolean
+export interface Function {
+  name: string;
+  is_view?: boolean;
+  is_init?: boolean;
   // TODO: This likely won't be an array in the future. Probably a map with keys
-  args?: number[]
-  callbacks?: any[]
-  callbacks_vec?: any[]
-  result?: number
+  args?: number[];
+  callbacks?: any[];
+  callbacks_vec?: any[];
+  result?: number;
+  // TODO need to include args serialization protocol
+  // TODO need to include result serialization protocol
 }
 
 export interface Type {
-  id: number
-  schema: Schema
+  id: number;
+  schema: Schema;
 }
 
 export interface Schema {
-  title: string
-  type: string
-  // TODO this config seems to be for array, likely will need this to be own type
-  items?: Item[]
-  maxItems?: number
-  minItems?: number
+  title: string;
+  type: string;
+  // TODO this config seems to be for array type only, likely will need this to be own type
+  items?: Item[];
+  maxItems?: number;
+  minItems?: number;
 }
 
 export interface Item {
-  type: string
-  format: string
-  minimum?: number
+  type: string;
+  format: string;
+  minimum?: number;
 }

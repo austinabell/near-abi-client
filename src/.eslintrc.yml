@@ -9,9 +9,9 @@ parser: '@typescript-eslint/parser'
 rules:
   no-inner-declarations: off
   '@typescript-eslint/no-explicit-any': off
-  '@typescript-eslint/camelcase': on
-  '@typescript-eslint/explicit-function-return-type': on
-  '@typescript-eslint/no-use-before-define': on
+  '@typescript-eslint/camelcase': 0
+  '@typescript-eslint/explicit-function-return-type': 0
+  '@typescript-eslint/no-use-before-define': 2
 
 parserOptions:
   ecmaVersion: 2018

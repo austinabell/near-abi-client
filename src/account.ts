@@ -1,6 +1,6 @@
-import BN from "bn.js";
-import { Account as InternalAccount, Connection } from "near-api-js";
-import { FinalExecutionOutcome } from "near-api-js/lib/providers";
+import BN from 'bn.js';
+import { Account as InternalAccount, Connection } from 'near-api-js';
+import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
 
 function parseJsonFromRawResponse(response: Uint8Array): any {
     return JSON.parse(Buffer.from(response).toString());
@@ -43,7 +43,7 @@ export class Account {
         this.internal = new InternalAccount(connection, accountId);
     }
 
-	// TODO maybe these should be named to avoid misuse of strings?
+    // TODO maybe these should be named to avoid misuse of strings?
     async viewFunction(
         contractId: string,
         methodName: string,
