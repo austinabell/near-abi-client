@@ -1,6 +1,3 @@
-// import BN from 'bn.js';
-// import { Account, Contract as InternalContract } from 'near-api-js';
-// import { ContractMethods } from 'near-api-js/lib/contract';
 import BN from 'bn.js';
 import { Account, Connection } from 'near-api-js';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
@@ -22,18 +19,6 @@ export interface FunctionCallOptions {
      * @see {@link RequestSignTransactionsOptions}
      */
     walletCallbackUrl?: string;
-}
-
-// Makes `function.name` return given name
-function nameFunction(
-    name: string,
-    body: (args?: any) => CallableFunction
-): (args?: any) => CallableFunction {
-    return {
-        [name](args?: any): any {
-            return body(args);
-        },
-    }[name];
 }
 
 function deserializeJSON(response: Uint8Array): any {
@@ -133,7 +118,7 @@ export class Contract {
                 writable: false,
                 enumerable: true,
                 // TODO args could be better here, would be ideal to have positional args maybe?
-                value: nameFunction(funcName, (args?: any) => {
+                value: (args?: any) => {
                     const { connection, contractId } = this;
                     const func: CallableFunction = {
                         // Include a call function if the function is not view only.
@@ -173,7 +158,7 @@ export class Contract {
                         },
                     };
                     return func;
-                }),
+                },
             });
         });
     }
