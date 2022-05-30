@@ -1,24 +1,35 @@
-import { Account, Contract as InternalContract } from 'near-api-js';
-export interface ABI {
+import BN from 'bn.js';
+import { Account, Connection } from 'near-api-js';
+import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
+import { ABI } from './abi';
+export interface FunctionCallOptions {
+    /** max amount of gas that method call can use */
+    gas?: BN;
+    /** amount of NEAR (in yoctoNEAR) to send together with the call */
+    attachedDeposit?: BN;
     /**
-     * Methods that change state. These methods cost gas and require a signed transaction.
-     *
-     * @see {@link Account.functionCall}
+     * Metadata to send the NEAR Wallet if using it to sign transactions.
+     * @see {@link RequestSignTransactionsOptions}
      */
-    changeMethods: string[];
+    walletMeta?: string;
     /**
-     * View methods do not require a signed transaction.
-     *
-     * @@see {@link Account.viewFunction}
+     * Callback url to send the NEAR Wallet if using it to sign transactions.
+     * @see {@link RequestSignTransactionsOptions}
      */
-    viewMethods: string[];
+    walletCallbackUrl?: string;
+}
+export interface CallableFunction {
+    callFrom?(account: Account, opts?: FunctionCallOptions): Promise<FinalExecutionOutcome>;
+    view(): Promise<any>;
 }
 export declare class Contract {
-    readonly internalContract: InternalContract;
+    readonly connection: Connection;
+    readonly contractId: string;
+    readonly abi?: ABI;
     /**
-     * @param account NEAR account to sign change method transactions
-     * @param contractId NEAR account id where the contract is deployed
-     * @param options NEAR smart contract methods that your application will use. These will be available as `contract.methodName`
+     * @param connection Connection to NEAR network through RPC.
+     * @param contractId NEAR account id where the contract is deployed.
+     * @param abi ABI schema which will be used to generate methods to be called on this Contract
      */
-    constructor(account: Account, contractId: string, abi: ABI);
+    constructor(connection: Connection, contractId: string, abi?: ABI);
 }
