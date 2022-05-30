@@ -1,7 +1,8 @@
 import BN from 'bn.js';
 import { Account, Connection } from 'near-api-js';
 import { FinalExecutionOutcome } from 'near-api-js/lib/providers';
-import { CodeResult } from 'near-api-js/lib/providers/provider';
+import { CodeResult, getTransactionLastResult } from 'near-api-js/lib/providers/provider';
+import { ArgumentTypeError } from 'near-api-js/lib/utils/errors';
 import { ABI } from './abi';
 
 export interface FunctionCallOptions {
@@ -26,12 +27,29 @@ function deserializeJSON(response: Uint8Array): any {
 }
 
 function serializeJSON(input: any): Buffer {
+    const string = JSON.stringify(input);
+    console.log(string);
     return Buffer.from(JSON.stringify(input));
 }
 
 // Helper function so that
 function ignoreSerialization(input: Buffer): Buffer {
     return input;
+}
+
+/**
+ * Validation on arguments being a big number from bn.js
+ * Throws if an argument is not in BN format or otherwise invalid
+ * @param argMap
+ */
+function validateBNLike(argMap: { [name: string]: any }) {
+    const bnLike = 'number, decimal string or BN';
+    for (const argName of Object.keys(argMap)) {
+        const argValue = argMap[argName];
+        if (argValue && !BN.isBN(argValue) && isNaN(argValue)) {
+            throw new ArgumentTypeError(argName, bnLike, argValue);
+        }
+    }
 }
 
 async function callInternal(
@@ -41,18 +59,21 @@ async function callInternal(
     args: Buffer,
     opts?: FunctionCallOptions
 ): Promise<FinalExecutionOutcome> {
-    const { gas, attachedDeposit, walletMeta, walletCallbackUrl } = opts;
-    return account.functionCall({
+    validateBNLike({ opts: opts?.gas, amount: opts?.attachedDeposit });
+
+    const rawResult = await account.functionCall({
         contractId,
         methodName,
         args,
-        gas,
-        attachedDeposit,
-        walletMeta,
-        walletCallbackUrl,
+        gas: opts?.gas,
+        attachedDeposit: opts?.attachedDeposit,
+        walletMeta: opts?.walletMeta,
+        walletCallbackUrl: opts?.walletCallbackUrl,
         // Ignore because we have already serialized args
         stringify: ignoreSerialization,
     });
+
+    return getTransactionLastResult(rawResult);
 }
 
 async function viewInternal(
@@ -74,7 +95,11 @@ async function viewInternal(
     });
 
     if (result.logs) {
-        this.printLogs(contractId, result.logs);
+        if (!process.env['NEAR_NO_LOGS']) {
+            for (const log of result.logs) {
+                console.log(`Log [${contractId}]: ${log}`);
+            }
+        }
     }
 
     return (
@@ -118,7 +143,8 @@ export class Contract {
                 writable: false,
                 enumerable: true,
                 // TODO args could be better here, would be ideal to have positional args maybe?
-                value: (args?: any) => {
+                // TODO at least validate the number of args
+                value: (...args: any[]) => {
                     const { connection, contractId } = this;
                     const func: CallableFunction = {
                         // Include a call function if the function is not view only.
@@ -132,6 +158,7 @@ export class Contract {
                                 const paramBytes = args
                                     ? serializeJSON(args)
                                     : Buffer.alloc(0);
+                                console.log(paramBytes.toString());
                                 // Using inner NAJ APIs for result for consistency, but this might
                                 // not be ideal API.
                                 return callInternal(
