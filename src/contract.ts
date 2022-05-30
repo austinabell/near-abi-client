@@ -27,8 +27,6 @@ function deserializeJSON(response: Uint8Array): any {
 }
 
 function serializeJSON(input: any): Buffer {
-    const string = JSON.stringify(input);
-    console.log(string);
     return Buffer.from(JSON.stringify(input));
 }
 
@@ -158,7 +156,6 @@ export class Contract {
                                 const paramBytes = args
                                     ? serializeJSON(args)
                                     : Buffer.alloc(0);
-                                console.log(paramBytes.toString());
                                 // Using inner NAJ APIs for result for consistency, but this might
                                 // not be ideal API.
                                 return callInternal(
