@@ -10,7 +10,7 @@ export interface Function {
     args?: number[];
     callbacks?: any[];
     callbacks_vec?: any[];
-    result?: number;
+    result: number | null;
 }
 export interface Type {
     id: number;
@@ -18,7 +18,7 @@ export interface Type {
 }
 export interface Schema {
     title: string;
-    type: string;
+    type: string | string[];
     items?: Item[];
     maxItems?: number;
     minItems?: number;

@@ -14,7 +14,7 @@ export interface Function {
   args?: number[];
   callbacks?: any[];
   callbacks_vec?: any[];
-  result?: number;
+  result: number | null;
   // TODO need to include args serialization protocol
   // TODO need to include result serialization protocol
 }
@@ -26,7 +26,7 @@ export interface Type {
 
 export interface Schema {
   title: string;
-  type: string;
+  type: string | string[];
   // TODO this config seems to be for array type only, likely will need this to be own type
   items?: Item[];
   maxItems?: number;
