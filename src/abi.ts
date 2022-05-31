@@ -2,11 +2,11 @@
 
 export interface ABI {
   schema_version: string;
-  methods: Function[];
-  types: Type[];
+  methods: ABIFunction[];
+  types: ABIType[];
 }
 
-export interface Function {
+export interface ABIFunction {
   name: string;
   is_view?: boolean;
   is_init?: boolean;
@@ -19,21 +19,21 @@ export interface Function {
   // TODO need to include result serialization protocol
 }
 
-export interface Type {
+export interface ABIType {
   id: number;
-  schema: Schema;
+  schema: ABISchema;
 }
 
-export interface Schema {
+export interface ABISchema {
   title: string;
   type: string | string[];
   // TODO this config seems to be for array type only, likely will need this to be own type
-  items?: Item[];
+  items?: ABIItem[];
   maxItems?: number;
   minItems?: number;
 }
 
-export interface Item {
+export interface ABIItem {
   type: string;
   format: string;
   minimum?: number;

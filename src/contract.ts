@@ -133,9 +133,9 @@ export class Contract {
 
         // TODO this abi is optional, but are the only methods on Contract right now.
         // TODO Maybe worth making it useful outside of just ABI calls or making it mandatory?
-        this.abi?.methods.forEach((function_name) => {
-            const funcName = function_name.name;
-            const isView = function_name.is_view;
+        this.abi?.methods.forEach((fn) => {
+            const funcName = fn.name;
+            const isView = fn.is_view;
             // Create method on this contract object to be able to call methods.
             Object.defineProperty(this, funcName, {
                 writable: false,
